@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>កម្មវិធីគណនាថ្លៃស្រូវ (Offline)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Koulen&family=Noto+Sans+Khmer:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Khmer', sans-serif;
+        }
+        .font-koulen {
+            font-family: 'Koulen', cursive;
+        }
+        /* Custom scrollbar for better aesthetics */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-6 bg-white p-4 rounded-lg shadow-md">
+            <h1 class="text-4xl font-koulen text-green-700">កម្មវិធីគណនាថ្លៃស្រូវ</h1>
+            <p class="text-gray-600 mt-1">ដំណើរការដោយមិនចាំបាច់មានអ៊ីនធឺណិត និងរក្សាទុកទិន្នន័យនៅលើឧបករណ៍</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left Column: Calculator -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold text-center mb-4 text-blue-800">គណនាទម្ងន់ និងតម្លៃ</h2>
+                <div id="calculator" class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">តម្លៃ (រៀល/គីឡូក្រាម)</label>
+                        <input type="number" id="calc-price" class="calc-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="ឧ. 1200">
+                    </div>
+                    <p class="text-sm font-medium text-gray-700">បញ្ចូលទម្ងន់ (៥ ជួរ)</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <input type="number" id="weight-1" class="calc-input block w-full rounded-md border-gray-300 shadow-sm" placeholder="ទម្ងន់ទី១ (kg)">
+                        <input type="number" id="weight-2" class="calc-input block w-full rounded-md border-gray-300 shadow-sm" placeholder="ទម្ងន់ទី២ (kg)">
+                        <input type="number" id="weight-3" class="calc-input block w-full rounded-md border-gray-300 shadow-sm" placeholder="ទម្ងន់ទី៣ (kg)">
+                        <input type="number" id="weight-4" class="calc-input block w-full rounded-md border-gray-300 shadow-sm" placeholder="ទម្ងន់ទី៤ (kg)">
+                        <input type="number" id="weight-5" class="calc-input block w-full rounded-md border-gray-300 shadow-sm" placeholder="ទម្ងន់ទី៥ (kg)">
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200 text-center space-y-2">
+                        <div>
+                            <h3 class="text-md font-medium text-gray-700">ទម្ងន់បច្ចុប្បន្ន:</h3>
+                            <p id="total-weight-result" class="text-2xl font-bold text-gray-900">0 kg</p>
+                        </div>
+                        <div>
+                            <h3 class="text-md font-medium text-gray-700">តម្លៃបច្ចុប្បន្ន:</h3>
+                            <p id="total-price-result" class="text-2xl font-bold text-blue-700">0 ៛</p>
+                        </div>
+                    </div>
+                    <button id="save-batch-btn" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-300">រក្សាទុក</button>
+                </div>
+            </div>
+
+            <!-- Right Column: Saved Batches -->
+            <div class="bg-white p-6 rounded-lg shadow-md h-full flex flex-col">
+                <h2 class="text-xl font-bold text-center mb-4 text-purple-800">ប្រតិបត្តិការដែលបានរក្សាទុក</h2>
+                <div id="saved-batches-container" class="space-y-3 flex-grow flex flex-col">
+                    <ul id="saved-batches-list" class="space-y-2 flex-grow max-h-96 overflow-y-auto custom-scrollbar pr-2">
+                        <li class="text-center text-gray-500 pt-16">មិនទាន់មានប្រតិបត្តិការ</li>
+                    </ul>
+                    <div class="mt-4 pt-4 border-t-2 border-purple-200 text-center space-y-2">
+                        <div>
+                            <h3 class="text-md font-bold text-gray-800">ទម្ងន់សរុបទាំងអស់:</h3>
+                            <p id="grand-total-weight" class="text-2xl font-bold text-gray-900">0 kg</p>
+                        </div>
+                        <div>
+                            <h3 class="text-md font-bold text-gray-800">តម្លៃសរុបទាំងអស់:</h3>
+                            <p id="grand-total-price" class="text-3xl font-bold text-purple-700">0 ៛</p>
+                        </div>
+                    </div>
+                     <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4">
+                        <button id="download-report-btn" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300">ទាញយកជា Excel (.csv)</button>
+                        <button id="clear-batches-btn" class="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300">សម្អាតទាំងអស់</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Modal for confirmation -->
+        <div id="confirmation-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div class="mt-3 text-center">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title"></h3>
+                    <div class="mt-2 px-7 py-3">
+                        <p class="text-sm text-gray-500" id="modal-content"></p>
+                    </div>
+                    <div class="items-center px-4 py-3">
+                        <button id="modal-confirm-btn" class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-auto shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            យល់ព្រម
+                        </button>
+                        <button id="modal-cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-auto shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 ml-2">
+                            បោះបង់
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Helper Functions ---
+            const formatPrice = (price) => new Intl.NumberFormat('km-KH').format(price) + ' ៛';
+            const formatQuantity = (qty) => `${new Intl.NumberFormat('km-KH').format(qty)} kg`;
+
+            // --- State Management ---
+            let savedBatches = [];
+            const calcInputs = document.querySelectorAll('.calc-input');
+
+            // --- Local Storage Functions ---
+            function loadBatchesFromStorage() {
+                const batchesJSON = localStorage.getItem('riceCalculatorBatches');
+                savedBatches = batchesJSON ? JSON.parse(batchesJSON) : [];
+            }
+
+            function saveBatchesToStorage() {
+                localStorage.setItem('riceCalculatorBatches', JSON.stringify(savedBatches));
+            }
+
+            // --- Core Calculation & Rendering Functions ---
+            function calculateCurrentBatch() {
+                let totalWeight = 0;
+                for (let i = 1; i <= 5; i++) {
+                    totalWeight += parseFloat(document.getElementById(`weight-${i}`).value) || 0;
+                }
+                const pricePerKg = parseFloat(document.getElementById('calc-price').value) || 0;
+                const totalPrice = totalWeight * pricePerKg;
+
+                document.getElementById('total-weight-result').textContent = formatQuantity(totalWeight);
+                document.getElementById('total-price-result').textContent = formatPrice(totalPrice);
+            }
+
+            function renderSavedBatches() {
+                const listEl = document.getElementById('saved-batches-list');
+                listEl.innerHTML = '';
+                let grandTotalWeight = 0;
+                let grandTotalPrice = 0;
+
+                if (savedBatches.length === 0) {
+                    listEl.innerHTML = `<li class="text-center text-gray-500 pt-16">មិនទាន់មានប្រតិបត្តិការ</li>`;
+                } else {
+                    savedBatches.forEach((batch, index) => {
+                        const li = document.createElement('li');
+                        li.className = 'flex justify-between items-center bg-gray-50 p-2 rounded-md';
+                        li.innerHTML = `
+                            <span><strong>ដុំទី ${index + 1}:</strong> ${formatQuantity(batch.weight)} - ${formatPrice(batch.price)}</span>
+                            <button data-index="${index}" class="remove-batch-btn text-red-500 hover:text-red-700 text-xs font-bold">លុប</button>
+                        `;
+                        listEl.appendChild(li);
+                        grandTotalWeight += batch.weight;
+                        grandTotalPrice += batch.price;
+                    });
+                }
+
+                document.getElementById('grand-total-weight').textContent = formatQuantity(grandTotalWeight);
+                document.getElementById('grand-total-price').textContent = formatPrice(grandTotalPrice);
+                
+                document.querySelectorAll('.remove-batch-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const indexToRemove = parseInt(e.target.dataset.index);
+                        savedBatches.splice(indexToRemove, 1);
+                        saveBatchesToStorage();
+                        renderSavedBatches();
+                    });
+                });
+            }
+
+            // --- Event Listeners ---
+            calcInputs.forEach(input => input.addEventListener('input', calculateCurrentBatch));
+
+            document.getElementById('save-batch-btn').addEventListener('click', () => {
+                let totalWeight = 0;
+                for (let i = 1; i <= 5; i++) {
+                    totalWeight += parseFloat(document.getElementById(`weight-${i}`).value) || 0;
+                }
+                if (totalWeight === 0) {
+                    alert('សូមបញ្ចូលទម្ងន់សិន!');
+                    return;
+                }
+                const pricePerKg = parseFloat(document.getElementById('calc-price').value) || 0;
+                if (pricePerKg === 0) {
+                    alert('សូមបញ្ចូលតម្លៃក្នុងមួយគីឡូក្រាម!');
+                    return;
+                }
+                const totalPrice = totalWeight * pricePerKg;
+
+                savedBatches.push({ weight: totalWeight, price: totalPrice });
+                saveBatchesToStorage();
+                renderSavedBatches();
+
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById(`weight-${i}`).value = '';
+                }
+                calculateCurrentBatch();
+            });
+
+            document.getElementById('clear-batches-btn').addEventListener('click', () => {
+                if (savedBatches.length === 0) return;
+                showConfirmationModal('សម្អាតប្រតិបត្តិការទាំងអស់?', 'តើអ្នកប្រាកដទេថាចង់លុបប្រតិបត្តិការដែលបានរក្សាទុកទាំងអស់?', () => {
+                    savedBatches = [];
+                    saveBatchesToStorage();
+                    renderSavedBatches();
+                });
+            });
+
+            // --- UPDATED: Download Report Logic for CSV (Excel) ---
+            document.getElementById('download-report-btn').addEventListener('click', () => {
+                if (savedBatches.length === 0) {
+                    alert('មិនទាន់មានប្រតិបត្តិការសម្រាប់ទាញយករបាយការណ៍!');
+                    return;
+                }
+
+                let grandTotalWeight = 0;
+                let grandTotalPrice = 0;
+                
+                // CSV Header
+                let csvContent = '"ល.រ.","ទម្ងន់ (kg)","តម្លៃសរុប (រៀល)"\n';
+
+                // CSV Rows
+                savedBatches.forEach((batch, index) => {
+                    csvContent += `"${index + 1}","${batch.weight}","${batch.price}"\n`;
+                    grandTotalWeight += batch.weight;
+                    grandTotalPrice += batch.price;
+                });
+
+                // CSV Footer (Summary)
+                csvContent += '\n'; // Add a blank line for spacing
+                csvContent += `,"សរុបទាំងអស់:",\n`;
+                csvContent += `,"ទម្ងន់សរុប:",${grandTotalWeight}\n`;
+                csvContent += `,"តម្លៃសរុប:",${grandTotalPrice}\n`;
+
+                // Create Blob and Download Link
+                const bom = new Uint8Array([0xEF, 0xBB, 0xBF]); // UTF-8 BOM for Excel compatibility
+                const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                const dateString = new Date().toISOString().slice(0, 10);
+
+                link.setAttribute('href', url);
+                link.setAttribute('download', `Rice_Report_${dateString}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            });
+
+            // --- Confirmation Modal Logic ---
+            const modal = document.getElementById('confirmation-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalContent = document.getElementById('modal-content');
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            const cancelBtn = document.getElementById('modal-cancel-btn');
+
+            function showConfirmationModal(title, content, onConfirm) {
+                modalTitle.textContent = title;
+                modalContent.textContent = content;
+                modal.classList.remove('hidden');
+
+                const newConfirmBtn = confirmBtn.cloneNode(true);
+                confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+                newConfirmBtn.addEventListener('click', () => {
+                    onConfirm();
+                    modal.classList.add('hidden');
+                });
+            }
+            cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
+
+            // --- Initial Load ---
+            loadBatchesFromStorage();
+            renderSavedBatches();
+        });
+    </script>
+</body>
+</html>
